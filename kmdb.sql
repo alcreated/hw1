@@ -112,13 +112,98 @@
 
 -- Drop existing tables, so you'll start fresh each time this script is run.
 -- TODO!
+DROP TABLE IF EXISTS ensembles;
+DROP TABLE IF EXISTS actors;
+DROP TABLE IF EXISTS movies;
+DROP TABLE IF EXISTS studios;
 
 -- Create new tables, according to your domain model
 -- TODO!
+CREATE TABLE studios (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE movies (
+    id INTEGER PRIMARY KEY,
+    title TEXT,
+    year_released INTEGER,
+    rating TEXT,
+    studio_id INTEGER,
+    FOREIGN KEY (studio_id) REFERENCES studios(id)
+);
+
+CREATE TABLE actors (
+    id INTEGER PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE ensembles (
+    id INTEGER PRIMARY KEY,
+    movie_id INTEGER,
+    actor_id INTEGER,
+    character_name TEXT,
+    FOREIGN KEY(movie_id) REFERENCES movies(id),
+    FOREIGN KEY(actor_id) REFERENCES actors(id)
+);
+
 
 -- Insert data into your database that reflects the sample data shown above
 -- Use hard-coded foreign key IDs when necessary
 -- TODO!
+
+INSERT INTO studios (id, name)
+VALUES (1, 'Warner Bros.');
+
+
+INSERT INTO movies (id, title, year_released, rating, studio_id)
+VALUES
+    (1, 'Batman Begins', 2005, 'PG-13', 1),
+    (2, 'The Dark Knight', 2008, 'PG-13', 1),
+    (3, 'The Dark Knight Rises', 2012, 'PG-13', 1);
+
+
+INSERT INTO actors (id, name)
+VALUES
+    (1, 'Christian Bale'),
+    (2, 'Michael Caine'),
+    (3, 'Liam Neeson'),
+    (4, 'Katie Holmes'),
+    (5, 'Gary Oldman'),
+    (6, 'Heath Ledger'),
+    (7, 'Aaron Eckhart'),
+    (8, 'Maggie Gyllenhaal'),
+    (9, 'Tom Hardy'),
+    (10, 'Joseph Gordon-Levitt'),
+    (11, 'Anne Hathaway');
+
+
+INSERT INTO ensembles (id, movie_id, actor_id, character_name)
+VALUES
+    -- Batman Begins
+    (1, 1, 1, 'Bruce Wayne'),
+    (2, 1, 2, 'Alfred'),
+    (3, 1, 3, 'Ra''s Al Ghul'),
+    (4, 1, 4, 'Rachel Dawes'),
+    (5, 1, 5, 'Commissioner Gordon'),
+
+
+    -- The Dark Knight
+    (6, 2, 1, 'Bruce Wayne'),
+    (7, 2, 6, 'Joker'),
+    (8, 2, 7, 'Harvey Dent'),
+    (9, 2, 2, 'Alfred'),
+    (10, 2, 8, 'Rachel Dawes'),
+
+
+    -- The Dark Knight Rises
+    (11, 3, 1, 'Bruce Wayne'),
+    (12, 3, 5, 'Commissioner Gordon'),
+    (13, 3, 9, 'Bane'),
+    (14, 3, 10, 'John Blake'),
+    (15, 3, 11, 'Selina Kyle');
+
+
 
 -- Prints a header for the movies output
 .print "Movies"
@@ -127,6 +212,13 @@
 
 -- The SQL statement for the movies output
 -- TODO!
+SELECT m.title,
+       m.year_released,
+       m.rating,
+       s.name
+FROM movies m
+JOIN studios s
+  ON m.studio_id = s.id;
 
 -- Prints a header for the cast output
 .print ""
@@ -137,3 +229,11 @@
 
 -- The SQL statement for the cast output
 -- TODO!
+SELECT m.title,
+       a.name,
+       e.character_name
+FROM ensembles e
+JOIN actors a
+  ON e.actor_id = a.id
+JOIN movies m
+  ON e.movie_id = m.id;
